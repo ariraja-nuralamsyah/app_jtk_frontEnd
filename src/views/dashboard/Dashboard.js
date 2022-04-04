@@ -1,6 +1,9 @@
-import React, { lazy } from 'react'
-import axios from 'axios';
-
+import React, { 
+  lazy, 
+  // useEffect 
+} from 'react'
+// import axios from 'axios'
+// import { useHistory } from 'react-router-dom';
 import {
   CAvatar,
   CButton,
@@ -61,11 +64,6 @@ const Dashboard = () => {
   const random = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min)
   }
-
-  axios.defaults.withCredentials = true;
-  axios.get("http://localhost:8081/account").then((response) => {
-    console.log(response)
-  });
 
   const progressExample = [
     { title: 'Visits', value: '29.703 Users', percent: 40, color: 'success' },
@@ -187,6 +185,31 @@ const Dashboard = () => {
       activity: 'Last week',
     },
   ]
+
+  // let history = useHistory();
+  // useEffect(() => {
+  //   const verify = async () =>{
+  //     axios.defaults.withCredentials = true;
+  //     await axios.post(`${process.env.REACT_APP_API_GATEWAY_URL}account/verify`)
+  //     .then(function (response) {
+  //       console.log(response)})
+  //     .catch(function (error) {
+  //       if(error.toJSON().status >= 300 && error.toJSON().status <= 399){
+  //         history.push({
+  //           pathname: "/login",
+  //           state: {
+  //             session : true,
+  //           }
+  //         });
+  //       }else if(error.toJSON().status >= 400 && error.toJSON().status <= 499){
+  //         history.push("/404");
+  //       }else if(error.toJSON().status >= 500 && error.toJSON().status <= 599){
+  //         history.push("/500");
+  //       }
+  //     });
+  //   }
+  //   verify();
+  // }, [history]);
 
   return (
     <>

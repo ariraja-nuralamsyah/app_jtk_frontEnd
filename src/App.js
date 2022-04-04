@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { HashRouter, Route, Switch } from 'react-router-dom'
+import { Route, Switch, BrowserRouter } from 'react-router-dom'
 import './scss/style.scss'
 
 const loading = (
@@ -20,7 +20,7 @@ const Page500 = React.lazy(() => import('./views/pages/page500/Page500'))
 class App extends Component {
   render() {
     return (
-      <HashRouter>
+      <BrowserRouter>
         <React.Suspense fallback={loading}>
           <Switch>
             <Route exact path="/login" name="Login Page" render={(props) => <Login {...props} />} />
@@ -28,9 +28,10 @@ class App extends Component {
             <Route exact path="/404" name="Page 404" render={(props) => <Page404 {...props} />} />
             <Route exact path="/500" name="Page 500" render={(props) => <Page500 {...props} />} />
             <Route path="/" name="Home" render={(props) => <DefaultLayout {...props} />} />
+            {/* <Route path="*" component={Page404} /> */}
           </Switch>
         </React.Suspense>
-      </HashRouter>
+      </BrowserRouter>
     )
   }
 }

@@ -9,8 +9,9 @@ export const AppSidebarNav = ({ items }) => {
   const navLink = (name, icon, badge) => {
     return (
       <>
-        {icon && icon}
-        {name && name}
+        {icon && <div style={{width: "15px", textAlign:"center"}}>{icon}</div>}
+        {name && icon && <div style={{paddingLeft: "30px"}}>{name}</div>}
+        {name && !icon && name}
         {badge && (
           <CBadge color={badge.color} className="ms-auto">
             {badge.text}
@@ -25,8 +26,8 @@ export const AppSidebarNav = ({ items }) => {
     const Component = component
     return (
       <>
-        {rest.role === localStorage.getItem('Role') && (
           <Component
+            style={icon ? {paddingLeft: "22px", whiteSpace:'normal'} : !rest.to ? {paddingLeft: "22px", whiteSpace:'normal'} : {paddingLeft: "3.6rem", whiteSpace:'normal'}}
             {...(rest.to &&
               !rest.items && {
                 component: NavLink,
@@ -37,38 +38,38 @@ export const AppSidebarNav = ({ items }) => {
           >
             {navLink(name, icon, badge)}
           </Component>
-        )}
       </>
     )
   }
   const navGroup = (item, index) => {
     const { component, name, icon, to, ...rest } = item
     const Component = component
-    
     return (
       <>
-        {rest.role === localStorage.getItem('Role') && (
           <Component
+            style={{paddingLeft: "8px"}}
             idx={String(index)}
             key={index}
             toggler={navLink(name, icon)}
             visible={location.pathname.startsWith(to)}
             {...rest}
           >
-            {item.items?.map((item, index) =>
-              item.items ? navGroup(item, index) : navItem(item, index),
+            {item.items?.map((item) =>
+              item.items ? navGroup(item, item.index) : navItem(item, item.index),
             )}
           </Component>
-        )}
       </>
     )
   }
 
   return (
-    <React.Fragment>
-      {items &&
-        items.map((item, index) => (item.items ? navGroup(item, index) : navItem(item, index)))}
-    </React.Fragment>
+    <>
+    {items && items.filter(item => item.role === localStorage.getItem('id_role')).map((item) => (
+      <React.Fragment key={item.index}>
+        {item.items ? navGroup(item, item.index) : navItem(item, item.index)}
+      </React.Fragment>
+    ))}
+    </>
   )
 }
 

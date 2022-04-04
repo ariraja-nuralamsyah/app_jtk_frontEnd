@@ -2,6 +2,11 @@ import React from 'react'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const FinalisasiPemetaan = React.lazy(() => import('./views/pemetaan/finalisasi/Finalisasi'))
+const Perangkingan = React.lazy(() => import('./views/pemetaan/perangkingan/Perangkingan'))
+const Profile = React.lazy(() => import('./views/pages/Profile'))
+const PengelolaanAkun = React.lazy(() => import('./views/pengelolaan/pengelolaanAkun'))
+const PengelolaanTimeline = React.lazy(() => import('./views/pengelolaan/pengelolaanTimeline'))
+const RekapCV = React.lazy(() => import('./views/rekap/rekapCV'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
 
@@ -53,8 +58,13 @@ const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
+  { path: '/profile', name: 'Profile', component: Profile },
+  { path: '/pengelolaan-akun', name: 'Pengelolaan Akun', component: PengelolaanAkun },
+  { path: '/pengelolaanTimeline', name: 'Pengelolaan Timeline', component: PengelolaanTimeline },
+  { path: '/rekapCV', name: 'Rekap CV', component: RekapCV },
   { path: '/pemetaan', name: 'Pemetaan', component: FinalisasiPemetaan, exact: true },
-  { path: '/pemetaan/finalisasi', name: 'Finalisasi', component: FinalisasiPemetaan },
+  { path: '/pemetaan/perangkingan', name: 'Perangkingan Mahasiswa', component: Perangkingan },
+  { path: '/pemetaan/finalisasi', name: 'Pemilihan Mahasiswa', component: FinalisasiPemetaan },
   { path: '/theme', name: 'Theme', component: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', component: Colors },
   { path: '/theme/typography', name: 'Typography', component: Typography },
