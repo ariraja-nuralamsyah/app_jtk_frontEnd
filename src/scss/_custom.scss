@@ -8,7 +8,7 @@ a:hover {
 }
 
 .header.header-sticky.mb-4{
-  z-index: 1;
+  z-index: 2;
 }
 
 .sidebar.sidebar-fixed{
@@ -19,7 +19,15 @@ a:hover {
   z-index: -2;
 }
 
+.ant-table-cell-fix-left{
+  z-index: 1 !important;
+}
+
 Button#button-lock.ant-btn.ant-btn-circle:hover {
+  background-color: #D18E24 !important
+}
+
+Button#button-eye.ant-btn.ant-btn-circle:hover {
   background-color: #D18E24 !important
 }
 
@@ -31,6 +39,10 @@ Button#button-trash.ant-btn.ant-btn-circle:hover {
   background-color: #900427 !important
 }
 
+Button#button-download.ant-btn.ant-btn-circle:hover {
+  background-color: #294F75 !important
+}
+
 Button#create-akun.ant-btn.ant-btn-round:hover {
   background-color: #236A00 !important
 }
@@ -39,8 +51,33 @@ Button#generate.ant-btn.ant-btn-primary:hover {
   background-color: #236A00 !important
 }
 
+Button#selesai.ant-btn.ant-btn-round.ant-btn-default.ant-btn-sm:hover {
+  background-color: #236A00 !important
+}
+
+Button#detail.ant-btn.ant-btn-round.ant-btn-default.ant-btn-sm:hover {
+  background-color: #D18E24 !important
+}
+
+Button#update.ant-btn.ant-btn-round.ant-btn-default.ant-btn-sm:hover {
+  background-color: #BBB11A !important
+}
+
+Button#download.ant-btn.ant-btn-round.ant-btn-default.ant-btn-sm:hover {
+  background-color: #294F75 !important
+}
+
 Button#finalisasi.ant-btn.ant-btn-primary:hover {
   background-color: #005B4B !important
+}
+
+div#card-filter.card.mb-4:hover {
+  background-color: #C8C8C8 !important;
+  cursor: pointer;
+}
+
+Button#button-submit.ant-btn.ant-btn-round.ant-btn-default:hover {
+  background-color: #294F75 !important
 }
 
 .ant-picker-dropdown{

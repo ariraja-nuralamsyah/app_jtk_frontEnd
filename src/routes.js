@@ -4,9 +4,22 @@ const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const FinalisasiPemetaan = React.lazy(() => import('./views/pemetaan/finalisasi/Finalisasi'))
 const Perangkingan = React.lazy(() => import('./views/pemetaan/perangkingan/Perangkingan'))
 const Profile = React.lazy(() => import('./views/pages/Profile'))
+const DetailCV = React.lazy(() => import('./views/rekap/CV/detailCV'))
 const PengelolaanAkun = React.lazy(() => import('./views/pengelolaan/pengelolaanAkun'))
 const PengelolaanTimeline = React.lazy(() => import('./views/pengelolaan/pengelolaanTimeline'))
-const RekapCV = React.lazy(() => import('./views/rekap/rekapCV'))
+const RekapCV = React.lazy(() => import('./views/rekap/CV/rekapCV'))
+const ListPerusahaan = React.lazy(() => import('./views/rekap/perusahaan/listPerusahaan'))
+const UpdatePerusahaan = React.lazy(() => import('./views/rekap/perusahaan/updatePerusahaan'))
+const DetailPerusahaan = React.lazy(() => import('./views/rekap/perusahaan/detailPerusahaan'))
+const DetailPrerequisitePerusahaan = React.lazy(() => import('./views/rekap/perusahaan/detailPrerequisite'))
+const IdentitasPerusahaan = React.lazy(() => import('./views/rekap/perusahaan/identitasPerusahaan'))
+const PrerequisitePerusahaan = React.lazy(() => import('./views/rekap/perusahaan/prerequisitePerusahaan'))
+const UpdatePrerequisite = React.lazy(() => import('./views/rekap/perusahaan/updatePrerequisite'))
+const TabelPrerequisite = React.lazy(() => import('./views/rekap/perusahaan/tabelPrerequisite'))
+const CreatePerusahaan = React.lazy(() => import('./views/rekap/perusahaan/createPerusahaan'))
+const PengumpulanCV = React.lazy(() => import('./views/rekap/CV/dataCV'))
+const DataCV = React.lazy(() => import('./views/rekap/CV/dataMahasiswa'))
+const UpdateCV = React.lazy(() => import('./views/rekap/CV/updateCV'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
 
@@ -59,9 +72,25 @@ const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
   { path: '/profile', name: 'Profile', component: Profile },
+  { path: '/rekapCV/detailCV', name: 'Detail CV', component: DetailCV },
   { path: '/pengelolaan-akun', name: 'Pengelolaan Akun', component: PengelolaanAkun },
   { path: '/pengelolaanTimeline', name: 'Pengelolaan Timeline', component: PengelolaanTimeline },
-  { path: '/rekapCV', name: 'Rekap CV', component: RekapCV },
+  { path: '/rekapCV', name: 'Rekap CV', component: RekapCV, exact: true},
+  { path: '/listPerusahaan', name: 'List Perusahaan', component: ListPerusahaan, exact: true},
+  { path: '/listPerusahaan/createPerusahaan', name: 'Tambah Perusahaan', component: CreatePerusahaan},
+  { path: '/listPerusahaan/detailPerusahaan', name: 'Detail Perusahaan', component: DetailPerusahaan, exact: true},
+  { path: '/profilPerusahaan', name: 'Profil Perusahaan', component: IdentitasPerusahaan, exact: true},
+  { path: '/profilPerusahaan/updatePerusahaan', name: 'Update Perusahaan', component: UpdatePerusahaan},
+  { path: '/formulirKesediaan', name: 'Formulir Kesediaan Perusahaan', component: PrerequisitePerusahaan, exact: true},
+  { path: '/formulirKesediaan/prerequisite', name: 'Prerequisite', component: DetailPrerequisitePerusahaan},
+  { path: '/formulirKesediaan/updatePrerequisite', name: 'Update Prerequisite', component: UpdatePrerequisite},
+  { path: '/listPerusahaan/detailPerusahaan/prerequisite', name: 'Prerequisite', component: DetailPrerequisitePerusahaan},
+  { path: '/listPerusahaan/detailPerusahaan/updatePrerequisite', name: 'Update Prerequisite', component: UpdatePrerequisite},
+  { path: '/listPerusahaan/detailPerusahaan/updatePerusahaan', name: 'Update Perusahaan', component: UpdatePerusahaan},
+  { path: '/CV', name: 'CV', component: PengumpulanCV, exact: true},
+  { path: '/prerequisitePerusahaan', name: 'Prerequisite Perusahaan', component: TabelPrerequisite, exact: true},
+  { path: '/CV/updateCV', name: 'Update CV', component: UpdateCV },
+  { path: '/dataMahasiswa', name: 'Data Mahasiswa', component: DataCV, exact: true},
   { path: '/pemetaan', name: 'Pemetaan', component: FinalisasiPemetaan, exact: true },
   { path: '/pemetaan/perangkingan', name: 'Perangkingan Mahasiswa', component: Perangkingan },
   { path: '/pemetaan/finalisasi', name: 'Pemilihan Mahasiswa', component: FinalisasiPemetaan },

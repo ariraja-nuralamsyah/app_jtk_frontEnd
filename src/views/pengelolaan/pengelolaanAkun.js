@@ -37,9 +37,9 @@ const PengelolaanAkun = () => {
   axios.defaults.withCredentials = true;
 
   const filterDataAccount = (data) => {
-    setAccountDosen(data.filter(item => item.id_role === 0 || item.id_role === 3))
-    setAccountMahasiswa(data.filter(item => item.id_role === 1))
-    setAccountPerusahaan(data.filter(item => item.id_role === 2))
+    setAccountDosen(data.lecturer)
+    setAccountMahasiswa(data.participant)
+    setAccountPerusahaan(data.company)
   }
 
   const refreshData = () => {
@@ -224,16 +224,6 @@ const PengelolaanAkun = () => {
     setIsModalLockVisible(false);
   }
 
-  const onFinish = (values) => {
-      console.log('Success:', values);
-  };
-
-  const onFinishFailed = (errorInfo) => {
-      console.log('Failed:', errorInfo);
-  };
-
-  
-  
   const columns = [{
     title: 'Nama',
     dataIndex: 'name',
@@ -256,41 +246,59 @@ const PengelolaanAkun = () => {
     render: (text, record) => 
       <>
         <Row>
-          <Col span={9} style={{textAlign:"right"}}>
-            <Button 
-              id="button-lock" 
-              htmlType="submit" 
-              shape="circle" 
-              style={{backgroundColor:"#FBB03B", borderColor: "#FBB03B"}} 
-              onClick={() => {
-                showModalLock(record)
-                }}>
-              <FontAwesomeIcon icon={faLock} style={{color: "black"}}/>
-            </Button>  
-          </Col>
-          <Col span={6} style={{textAlign:"center"}}>
-            <Button 
-              id="button-pencil" 
-              htmlType="submit" 
-              shape="circle" 
-              style={{backgroundColor:"#FCEE21", borderColor: "#FCEE21"}} 
-              onClick={() => { 
-                showModalEdit(record); 
-              }}>
-              <FontAwesomeIcon icon={faPencil} style={{color: "black"}}/>
-            </Button>
-          </Col>
-          <Col span={9} style={{textAlign:"left"}}>
-            <Button 
-              id="button-trash" 
-              htmlType="submit" 
-              shape="circle" 
-              style={{backgroundColor:"#CC0033", borderColor: "#CC0033"}} 
-              onClick={() => {
-                showModalDelete(record)}}>
-              <FontAwesomeIcon icon={faTrashCan} style={{color: "black"}}/>
-            </Button>
-          </Col>
+          {record.id_role === 0 || record.id_role === 3 ? (
+            <>
+              <Col span={9} style={{textAlign:"right"}}>
+                <Button 
+                  id="button-lock" 
+                  htmlType="submit" 
+                  shape="circle" 
+                  style={{backgroundColor:"#FBB03B", borderColor: "#FBB03B"}} 
+                  onClick={() => {
+                    showModalLock(record)
+                    }}>
+                  <FontAwesomeIcon icon={faLock} style={{color: "black"}}/>
+                </Button>  
+              </Col>
+              <Col span={6} style={{textAlign:"center"}}>
+                <Button 
+                  id="button-pencil" 
+                  htmlType="submit" 
+                  shape="circle" 
+                  style={{backgroundColor:"#FCEE21", borderColor: "#FCEE21"}} 
+                  onClick={() => { 
+                    showModalEdit(record); 
+                  }}>
+                  <FontAwesomeIcon icon={faPencil} style={{color: "black"}}/>
+                </Button>
+              </Col>
+              <Col span={9} style={{textAlign:"left"}}>
+                <Button 
+                  id="button-trash" 
+                  htmlType="submit" 
+                  shape="circle" 
+                  style={{backgroundColor:"#CC0033", borderColor: "#CC0033"}} 
+                  onClick={() => {
+                    showModalDelete(record)}}>
+                  <FontAwesomeIcon icon={faTrashCan} style={{color: "black"}}/>
+                </Button>
+              </Col>
+            </>
+          ): 
+          <>
+            <Col span={24} style={{textAlign:"center"}}>
+              <Button 
+                id="button-lock" 
+                htmlType="submit" 
+                shape="circle" 
+                style={{backgroundColor:"#FBB03B", borderColor: "#FBB03B"}} 
+                onClick={() => {
+                  showModalLock(record)
+                  }}>
+                <FontAwesomeIcon icon={faLock} style={{color: "black"}}/>
+              </Button>  
+            </Col>
+          </>}
         </Row>
       </> 
   }];
@@ -328,7 +336,7 @@ const PengelolaanAkun = () => {
 
       <Modal title="Buat Akun" 
         visible={isModalcreateVisible} 
-        onOk={handleOkCreate} 
+        onOk={form.submit} 
         onCancel={handleCancelCreate}
         width={600}
         zIndex={9999999}
@@ -336,37 +344,36 @@ const PengelolaanAkun = () => {
             <Button key="back" onClick={handleCancelCreate}>
               Batal
             </Button>,
-            <Button key="submit" type="primary" onClick={handleOkCreate}>
+            <Button key="submit" type="primary" onClick={form.submit}>
               Simpan
             </Button>]}>
         <Form
             form={form}
             name="basic"
             wrapperCol={{ span: 24 }}
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
+            onFinish={handleOkCreate}
             autoComplete="off"
             >
-            <b>Name</b>
+            <b>Name<span style={{color:"red"}}> *</span></b>
             <Form.Item
                 name="name"
-                rules={[{ required: true, message: 'Please input your name!' }]}
+                rules={[{ required: true, message: 'Nama tidak boleh kosong!' }]}
             >
                 <Input onChange={e => setName(e.target.value)}/>
             </Form.Item>
 
-            <b>Username</b>
+            <b>Username<span style={{color:"red"}}> *</span></b>
             <Form.Item
                 name="username"
-                rules={[{ required: true, message: 'Please input your username!' }]}
+                rules={[{ required: true, message: 'Username tidak boleh kosong!' }]}
             >
                 <Input onChange={e => setUsername(e.target.value)}/>
             </Form.Item>
 
-            <b>Role</b>
+            <b>Role<span style={{color:"red"}}> *</span></b>
             <Form.Item
                 name="role"
-                rules={[{ required: true, message: 'Please pick an item!' }]}
+                rules={[{ required: true, message: 'Role harus dipilih!' }]}
             >
                 <Radio.Group>
                   <Radio value="3" onClick={() => setRole(3)}>Ketua Prodi</Radio>
@@ -378,7 +385,7 @@ const PengelolaanAkun = () => {
 
       <Modal title="Update Akun" 
         visible={isModaleditVisible} 
-        onOk={handleOkEdit} 
+        onOk={form.submit} 
         onCancel={handleCancelEdit}
         width={600}
         zIndex={9999999}
@@ -386,14 +393,13 @@ const PengelolaanAkun = () => {
             <Button key="back" onClick={handleCancelEdit}>
               Batal
             </Button>,
-            <Button key="submit" type="primary" onClick={handleOkEdit}>
+            <Button key="submit" type="primary" onClick={form.submit}>
               Simpan
             </Button>]}>
         <Form
         name="basic"
         wrapperCol={{ span: 24 }}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
+        onFinish={handleOkEdit}
         autoComplete="off"
         fields={[
           {
@@ -406,10 +412,10 @@ const PengelolaanAkun = () => {
           },
       ]}
         >
-        <b>Name</b>
+        <b>Name<span style={{color:"red"}}> *</span></b>
         <Form.Item
             name="name"
-            rules={[{ required: true, message: 'Please input your name!' }]}
+            rules={[{ required: true, message: 'Nama tidak boleh kosong!' }]}
         >
             <Input onChange={e => {
               setChoose(pre => {
@@ -418,10 +424,10 @@ const PengelolaanAkun = () => {
             }} value={choose.name}/>
         </Form.Item>
 
-        <b>Username</b>
+        <b>Username<span style={{color:"red"}}> *</span></b>
         <Form.Item
             name="username"
-            rules={[{ required: true, message: 'Please input your username!' }]}
+            rules={[{ required: true, message: 'Username tidak boleh kosong!' }]}
         >
             <Input onChange={e => {
               setChoose(pre => {
@@ -430,9 +436,9 @@ const PengelolaanAkun = () => {
             }} disabled/>
         </Form.Item>
 
-        <b>Role</b><br></br>
+        <b>Role<span style={{color:"red"}}> *</span></b><br></br>
         <Radio.Group
-            rules={[{ required: true, message: 'Please pick an item!' }]}
+            rules={[{ required: true, message: 'Role harus dipilih!' }]}
             value={choose.id_role}
         >
             <Radio value={3} onClick={() => {
@@ -451,7 +457,7 @@ const PengelolaanAkun = () => {
 
       <Modal title="Ganti Password" 
         visible={isModallockVisible} 
-        onOk={handleOkLock} 
+        onOk={form.submit} 
         onCancel={handleCancelLock}
         width={600}
         zIndex={9999999}
@@ -459,27 +465,28 @@ const PengelolaanAkun = () => {
             <Button key="back" onClick={handleCancelLock}>
               Batal
             </Button>,
-            <Button key="submit" type="primary" onClick={handleOkLock}>
+            <Button key="submit" type="primary" onClick={form.submit}>
               Simpan
             </Button>]}>
           <Form
             form={form}
             name="basic"
+            onFinish={handleOkLock}
             wrapperCol={{ span: 24 }}
             autoComplete="off"
             >
-            <b>Password Baru</b>
+            <b>Password Baru<span style={{color:"red"}}> *</span></b>
             <Form.Item
                 name="newPassword"
-                rules={[{ required: true, message: 'Please input your new password!' }]}
+                rules={[{ required: true, message: 'Password baru tidak boleh kosong!' }]}
             >
                 <Input.Password onChange={e => setNewPassword(e.target.value)}/>
             </Form.Item>
 
-            <b>Konfirmasi Password Baru</b>
+            <b>Konfirmasi Password Baru<span style={{color:"red"}}> *</span></b>
             <Form.Item
                 name="confirmPassword"
-                rules={[{ required: true, message: 'Please input your confirm password!' }]}
+                rules={[{ required: true, message: 'Konfirmasi password tidak boleh kosong!' }]}
             >
                 <Input.Password onChange={e => setConfirmPassword(e.target.value)}/>
             </Form.Item>

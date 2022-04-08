@@ -5,6 +5,7 @@ import {
     CButton,
   CCard,
   CCardBody,
+  CCardHeader,
   CCol,
   CRow,
 } from '@coreui/react'
@@ -60,14 +61,6 @@ const Profile = () => {
         setIsModalVisible(false);
     };
 
-    const onFinish = (values) => {
-        console.log('Success:', values);
-    };
-
-    const onFinishFailed = (errorInfo) => {
-        console.log('Failed:', errorInfo);
-    };
-
     function programStudi(id_prodi){
         if(id_prodi === "0"){
             return "D3 - Teknik Informatika"
@@ -79,20 +72,18 @@ const Profile = () => {
   return (
     <>
       <CCard className="mb-4">
-        <CCardBody>
-          <CRow>
-            <CCol sm={5}>
-              <h4 id="profil" className="card-title mb-0" style={{paddingLeft:"10px"}}>
-                Profil Saya
-              </h4>
-            </CCol>
-          </CRow>
-          <hr></hr>
-            <div style={{paddingLeft: "10px"}}>
+        <CCardHeader style={{paddingLeft:"20px"}}>
+            <h5><b>Profil Saya</b></h5>
+        </CCardHeader>
+        <CCardBody style={{paddingLeft: "20px"}}>
+            <div>
                 <CRow><CCol span={24}><b> Nama </b> </CCol></CRow>
                 <CRow className="card-title mb-2"><CCol span={24}> {localStorage.getItem('name')} </CCol></CRow>
-                <CRow><CCol span={24}><b> Program Studi </b> </CCol></CRow>
-                <CRow className="card-title mb-2"><CCol span={24}> {programStudi(localStorage.getItem('id_prodi'))} </CCol></CRow>
+                {localStorage.getItem('id_prodi') !== "undefined" && (
+                  <><CRow><CCol span={24}><b> Program Studi </b> </CCol></CRow>
+                  <CRow className="card-title mb-2"><CCol span={24}> {programStudi(localStorage.getItem('id_prodi'))} </CCol></CRow>
+                  </>
+                )}
                 <CRow><CCol span={24}><b> Username </b> </CCol></CRow>
                 <CRow className="card-title mb-2"><CCol span={24}> {localStorage.getItem('username')}  </CCol></CRow>
                 <CRow><CCol span={24}><b> Password </b> </CCol></CRow>
@@ -108,7 +99,7 @@ const Profile = () => {
 
       <Modal title="Ganti Password" 
         visible={isModalVisible} 
-        onOk={handleOk} 
+        onOk={form.submit} 
         onCancel={handleCancel}
         width={600}
         zIndex={9999999}
@@ -116,37 +107,36 @@ const Profile = () => {
             <Button key="back" onClick={handleCancel}>
               Batal
             </Button>,
-            <Button key="submit" type="primary" onClick={handleOk}>
+            <Button key="submit" type="primary" onClick={form.submit}>
               Ganti Password
             </Button>]}>
         <Form
             form={form}
             name="basic"
             wrapperCol={{ span: 24 }}
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
+            onFinish={handleOk}
             autoComplete="off"
             >
-            <b>Password Lama</b>
+            <b>Password Lama<span style={{color:"red"}}> *</span></b>
             <Form.Item
                 name="oldPassword"
-                rules={[{ required: true, message: 'Please input your old password!' }]}
+                rules={[{ required: true, message: 'Password lama tidak boleh kosong!' }]}
             >
                 <Input.Password onChange={e => setOldPassword(e.target.value)}/>
             </Form.Item>
 
-            <b>Password Baru</b>
+            <b>Password Baru<span style={{color:"red"}}> *</span></b>
             <Form.Item
                 name="newPassword"
-                rules={[{ required: true, message: 'Please input your new password!' }]}
+                rules={[{ required: true, message: 'Password baru tidak boleh kosong!' }]}
             >
                 <Input.Password onChange={e => setNewPassword(e.target.value)}/>
             </Form.Item>
 
-            <b>Konfirmasi Password Baru</b>
+            <b>Konfirmasi Password Baru<span style={{color:"red"}}> *</span></b>
             <Form.Item
                 name="confirmPassword"
-                rules={[{ required: true, message: 'Please input your confirm password!' }]}
+                rules={[{ required: true, message: 'Konfirmasi password tidak boleh kosong!' }]}
             >
                 <Input.Password onChange={e => setConfirmPassword(e.target.value)}/>
             </Form.Item>

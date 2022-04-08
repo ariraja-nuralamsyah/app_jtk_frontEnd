@@ -198,7 +198,7 @@ const _nav = [
   {
     component: CNavItem,
     name: 'CV',
-    to: '/pengumpulanCV',
+    to: '/CV',
     icon: <FontAwesomeIcon icon={faScroll} size="lg"/>,
     role: '1',
     index: 22,
@@ -337,25 +337,33 @@ const _nav = [
   },
   {
     component: CNavItem,
-    name: 'Evaluasi Mahasiswa',
-    to: '/evaluasiMahasiswa',
-    icon: <FontAwesomeIcon icon={faBuildingCircleCheck} size="lg" /> ,
+    name: 'List Perusahaan',
+    to: '/listPerusahaan',
+    icon: <FontAwesomeIcon icon={faCity} size="lg"/>,
     role: '3',
-    index: 39,
+    index: 40,
   },
   {
     component: CNavItem,
-    name: 'Feedback Pelaksanaan Magang',
-    to: '/feedbackMagang',
+    name: 'Evaluasi Perusahaan',
+    to: '/evaluasiPerusahaan',
+    icon: <FontAwesomeIcon icon={faBuildingCircleCheck} size="lg" /> ,
+    role: '3',
+    index: 41,
+  },
+  {
+    component: CNavItem,
+    name: 'Feedback Perusahaan',
+    to: '/feedbackPerusahaan',
     icon: <FontAwesomeIcon icon={faBuildingCircleArrowRight} /> ,
     role: '3',
-    index: 40,
+    index: 42,
   },
   {
     component: CNavTitle,
     name: 'Lain - lain',
     role: '3',
-    index: 41,
+    index: 43,
   },
   {
     component: CNavItem,
@@ -363,7 +371,7 @@ const _nav = [
     to: '/pengelolaanKompetensi',
     icon: <FontAwesomeIcon icon={faGears} size="lg" />,
     role: '3',
-    index: 42,
+    index: 44,
   }
 ]
 

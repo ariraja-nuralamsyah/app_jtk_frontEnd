@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import 'antd/dist/antd.css';
 import {
   CCard,
@@ -14,7 +14,8 @@ import {
 import moment from 'moment';
 import { Tabs, Table, Button, Row, Col, Modal, notification, Form, Input, DatePicker, Select } from 'antd';
 
-import dataTimeline from './../dashboard/data'
+import { useHistory } from 'react-router-dom';
+import axios from 'axios';
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -22,27 +23,43 @@ const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;
 
 const PengelolaanTimeline = () => {
+    let history = useHistory();
+    const [timeline, setTimeline] = useState([])
+    const [formulir, setFormulir] = useState([])
     const [isModalcreateVisible, setIsModalCreateVisible] = useState(false)
     const [isModaleditTimelineVisible, setIsModalEditTimelineVisible] = useState(false)
     const [isModaleditFormulirVisible, setIsModalEditFormulirVisible] = useState(false)
     const [choose, setChoose] = useState([])
     const [name, setName] = useState("");
     const [keterangan, setKeterangan] = useState("");
-    const [date, setDate] = useState([]);
+    const [date, setDate] = useState({start_date: "", end_date: ""});
     const [form] = Form.useForm();
 
     function onChangeDate(date, dateString) {
-        setDate(date)
+        setDate({start_date:date[0]._d, end_date:date[1]._d})
     }
     function onChangeDateUpdate(date, dateString) {
         setChoose(pre => {
-            return {...pre, start:date[0]._d, end:date[1]._d}
+            return {...pre, start_date:date[0]._d, end_date:date[1]._d}
         })
+    }
+
+    const getData = (data) => {
+      for (var i = 0; i < data.length; i++) {
+        data[i].start_date = new Date(data[i].start_date);
+        data[i].end_date = new Date(data[i].end_date);
+      }
+      return data;
+    }
+
+    const refreshData = () => {
+      axios.get(`${process.env.REACT_APP_API_GATEWAY_URL}management-content/timeline`).then(result => setTimeline(result.data.data))
+      axios.get(`${process.env.REACT_APP_API_GATEWAY_URL}management-content/form-submit-time`).then(result => setFormulir(result.data.data))
     }
 
     function handleChange(value) {
         setChoose(pre => {
-            return {...pre, timeline:value}
+            return {...pre, id_timeline:value, description: timeline.find(item => item.id === value).description}
         })
     }
   const columnsTimeline = [{
@@ -56,12 +73,12 @@ const PengelolaanTimeline = () => {
   }, 
   {
     title: 'Nama Kegiatan',
-    dataIndex: 'monarch',
+    dataIndex: 'name',
     width: '25%',
   },
   {
     title: 'Keterangan',
-    dataIndex: 'house',
+    dataIndex: 'description',
     width: '35%',
   },
   {
@@ -70,10 +87,12 @@ const PengelolaanTimeline = () => {
     width: '25%',
     align: "center",
     render: (text, record) => {
-        if(record.start.toLocaleDateString("en-GB", {month : 'long'}) === record.end.toLocaleDateString("en-GB", {month : 'long'})){
-            return `${record.start.toLocaleDateString("en-GB", {day : 'numeric'})} - ${record.end.toLocaleDateString("en-GB", {day : 'numeric', month : 'long', year: 'numeric'})}`
+      let start_date = new Date(record.start_date);
+      let end_date = new Date(record.end_date);
+        if(start_date.toLocaleDateString("en-GB", {month : 'long'}) === end_date.toLocaleDateString("en-GB", {month : 'long'})){
+            return `${start_date.toLocaleDateString("en-GB", {day : 'numeric'})} - ${end_date.toLocaleDateString("en-GB", {day : 'numeric', month : 'long', year: 'numeric'})}`
         }else{
-            return `${record.start.toLocaleDateString("en-GB", {day : 'numeric', month: 'long'})} - ${record.end.toLocaleDateString("en-GB", {day : 'numeric', month : 'long', year: 'numeric'})}`
+            return `${start_date.toLocaleDateString("en-GB", {day : 'numeric', month: 'long'})} - ${end_date.toLocaleDateString("en-GB", {day : 'numeric', month : 'long', year: 'numeric'})}`
         }
     }
   },
@@ -110,54 +129,6 @@ const PengelolaanTimeline = () => {
       </> 
   }];
 
-  const dataFormulir = [
-    {
-        prodi: "All",
-        nama: "Pengajuan perusahaan",
-        timeline: "Pencarian Perusahaan"
-    },{
-        prodi: "All",
-        nama: "Pengisian CV",
-        timeline: "Pengumpulan CV"
-    },{
-        prodi: "All",
-        nama: "Pengisian prerequisite perusahaan",
-        timeline: "Pengiriman surat penjagaan"
-    },{
-        prodi: "All",
-        nama: "Pemilihan prioritas perusahaan",
-        timeline: "Pemetaan mahasiswa"
-    },{
-        prodi: "All",
-        nama: "Finalisasi pemetaan",
-        timeline: "Sosialisasi 2"
-    },{
-        prodi: "D3",
-        nama: "Pengisian evaluasi peserta KP",
-        timeline: "Formulir evaluasi & feedback KP"
-    },{
-        prodi: "D3",
-        nama: "Pengisian feedback peserta KP",
-        timeline: "Formulir evaluasi & feedback KP"
-    },{
-        prodi: "D4",
-        nama: "Pengisian evaluasi peserta PKL 1",
-        timeline: "Formulir evaluasi & feedback KP"
-    },{
-        prodi: "D4",
-        nama: "Pengisian evaluasi peserta PKL 2",
-        timeline: "Formulir evaluasi & feedback KP"
-    },{
-        prodi: "D4",
-        nama: "Pengisian evaluasi peserta PKL 3",
-        timeline: "Formulir evaluasi & feedback KP"
-    },{
-        prodi: "D4",
-        nama: "Pengisian feedback peserta PKL",
-        timeline: "Formulir evaluasi & feedback KP"
-    }];
-    
-
   const columnsFormulir = [{
     title: 'No',
     dataIndex: 'no',
@@ -169,7 +140,7 @@ const PengelolaanTimeline = () => {
   }, 
   {
     title: 'Nama Formulir',
-    dataIndex: 'nama',
+    dataIndex: 'name',
     width: '55%',
   },
   {
@@ -178,11 +149,12 @@ const PengelolaanTimeline = () => {
     width: '25%',
     align: "center",
     render: (text, record) => {
-        let data = dataTimeline.filter(item => item.monarch === record.timeline);
-        if(data[0].start.toLocaleDateString("en-GB", {month : 'long'}) === data[0].end.toLocaleDateString("en-GB", {month : 'long'})){
-            return `${data[0].start.toLocaleDateString("en-GB", {day : 'numeric'})} - ${data[0].end.toLocaleDateString("en-GB", {day : 'numeric', month : 'long', year: 'numeric'})}`
+        let start_date = new Date(record.start_date)
+        let end_date = new Date(record.end_date)
+        if(start_date.toLocaleDateString("en-GB", {month : 'long'}) === end_date.toLocaleDateString("en-GB", {month : 'long'})){
+            return `${start_date.toLocaleDateString("en-GB", {day : 'numeric'})} - ${end_date.toLocaleDateString("en-GB", {day : 'numeric', month : 'long', year: 'numeric'})}`
         }else{
-            return `${data[0].start.toLocaleDateString("en-GB", {day : 'numeric', month: 'long'})} - ${data[0].end.toLocaleDateString("en-GB", {day : 'numeric', month : 'long', year: 'numeric'})}`
+            return `${start_date.toLocaleDateString("en-GB", {day : 'numeric', month: 'long'})} - ${end_date.toLocaleDateString("en-GB", {day : 'numeric', month : 'long', year: 'numeric'})}`
         }
     }
   },
@@ -220,6 +192,10 @@ const PengelolaanTimeline = () => {
   const showModalEditFormulir = (record) => {
     setIsModalEditFormulirVisible(true);
     setChoose(record)
+
+    setChoose(pre => {
+      return {...pre, description:timeline.find(item => item.id === record.id_timeline).description}
+    })
   };
 
   const showModalDelete = (record) => {
@@ -227,7 +203,7 @@ const PengelolaanTimeline = () => {
       title: "Konfirmasi hapus Timeline",
       okText: "Ya",
       onOk: () => {
-        if(dataFormulir.find(item => item.timeline === record.monarch)){
+        if(formulir.find(item => item.id_timeline === record.id)){
           notification.error({
             message: 'Timeline tersebut sedang digunakan!',
             onClick: () => {
@@ -235,32 +211,141 @@ const PengelolaanTimeline = () => {
             }
           });
         }else{
-          handleOkDelete(record.id_account)
+          handleOkDelete(record.id)
         }
       }
     })
   };
 
-  const handleOkCreate = () => {
-        console.log(name)
-        console.log(keterangan)
-        console.log(date[0]._d)
-        console.log(date[1]._d)
+  const handleOkCreate = async () => {
+    await axios.post(`${process.env.REACT_APP_API_GATEWAY_URL}management-content/timeline/create`, {
+      name: name,
+      start_date: moment(date.start_date).format("yyyy/MM/DD"),
+      end_date: moment(date.end_date).format("yyyy/MM/DD"),
+      description: keterangan,
+      prodi_id: localStorage.getItem("id_prodi"),
+    }).then((response) => {
+        refreshData();
+        notification.success({
+          message: 'Timeline berhasil dibuat',
+          onClick: () => {
+            console.log('Notification Clicked!');
+          }
+        });
+        form.resetFields();
+        setDate("");
+        setName("");
+        setKeterangan("");
+        setIsModalCreateVisible(false);
+    }).catch((error) => {
+      form.resetFields();
+      setDate("");
+      setName("");
+      setKeterangan("");
+      setIsModalCreateVisible(false);
+      notification.error({
+        message: 'Timeline gagal dibuat!',
+        onClick: () => {
+          console.log('Notification Clicked!');
+        }
+      });
+    });
     };
 
-    const handleOkEditTimeline = () => {
-        console.log(name)
-        console.log(keterangan)
-        console.log(choose.start)
-        console.log(choose.end)
+    const handleOkEditTimeline = async () => {
+      await axios.put(`${process.env.REACT_APP_API_GATEWAY_URL}management-content/timeline/update/${choose.id}`, {
+        name: choose.name,
+        start_date: moment(choose.start_date).format("yyyy/MM/DD"),
+        end_date: moment(choose.end_date).format("yyyy/MM/DD"),
+        description: choose.description,
+        prodi_id: choose.prodi_id,
+      }).then((response) => {
+          refreshData();
+          notification.success({
+            message: 'Timeline berhasil diubah',
+            onClick: () => {
+              console.log('Notification Clicked!');
+            }
+          });
+          form.resetFields();
+          setDate("");
+          setName("");
+          setKeterangan("");
+          setIsModalEditTimelineVisible(false);
+      }).catch((error) => {
+        form.resetFields();
+        setDate("");
+        setName("");
+        setKeterangan("");
+        setIsModalEditTimelineVisible(false);
+        notification.error({
+          message: 'Timeline gagal diubah!',
+          onClick: () => {
+            console.log('Notification Clicked!');
+          }
+        });
+      });
     };
 
     const handleOkEditFormulir = async () => {
-    
+      await axios.put(`${process.env.REACT_APP_API_GATEWAY_URL}management-content/form-submit-time/update/${choose.id}`, {
+        id_timeline: choose.id_timeline
+      }).then((response) => {
+          refreshData();
+          notification.success({
+            message: 'Formulir berhasil diubah',
+            onClick: () => {
+              console.log('Notification Clicked!');
+            }
+          });
+          form.resetFields();
+          setDate("");
+          setName("");
+          setKeterangan("");
+          setChoose("");
+          setIsModalEditFormulirVisible(false);
+      }).catch((error) => {
+        form.resetFields();
+        setDate("");
+        setName("");
+        setKeterangan("");
+        setChoose("");
+        setIsModalEditFormulirVisible(false);
+        notification.error({
+          message: 'Formulir gagal diubah!',
+          onClick: () => {
+            console.log('Notification Clicked!');
+          }
+        });
+      });
     };
 
     const handleOkDelete = async (id) => {
-    
+      await axios.delete(`${process.env.REACT_APP_API_GATEWAY_URL}management-content/timeline/delete/${id}`, {
+      }).then((response) => {
+          refreshData();
+          notification.success({
+            message: 'Timeline berhasil dihapus',
+            onClick: () => {
+              console.log('Notification Clicked!');
+            }
+          });
+          form.resetFields();
+          setDate("");
+          setName("");
+          setKeterangan("");
+      }).catch((error) => {
+        form.resetFields();
+        setDate("");
+        setName("");
+        setKeterangan("");
+        notification.error({
+          message: 'Timeline gagal dihapus!',
+          onClick: () => {
+            console.log('Notification Clicked!');
+          }
+        });
+      });
     };
 
     const handleCancelCreate = () => {
@@ -275,13 +360,50 @@ const PengelolaanTimeline = () => {
     setIsModalEditFormulirVisible(false);
     }
 
-    const onFinish = (values) => {
-        console.log('Success:', values);
-    };
-
-    const onFinishFailed = (errorInfo) => {
-        console.log('Failed:', errorInfo);
-    };
+  useEffect(() => {
+    const getTimeline = async () =>{
+      axios.defaults.withCredentials = true;
+      await axios.get(`${process.env.REACT_APP_API_GATEWAY_URL}management-content/timeline`)
+      .then(function (response) {
+        setTimeline(response.data.data)})
+      .catch(function (error) {
+        if(error.toJSON().status >= 300 && error.toJSON().status <= 399){
+          history.push({
+            pathname: "/login",
+            state: {
+              session : true,
+            }
+          });
+        }else if(error.toJSON().status >= 400 && error.toJSON().status <= 499){
+          history.push("/404");
+        }else if(error.toJSON().status >= 500 && error.toJSON().status <= 599){
+          history.push("/500");
+        }
+      });
+    }
+    const getFormulir = async () =>{
+      axios.defaults.withCredentials = true;
+      await axios.get(`${process.env.REACT_APP_API_GATEWAY_URL}management-content/form-submit-time`)
+      .then(function (response) {
+        setFormulir(response.data.data)})
+      .catch(function (error) {
+        if(error.toJSON().status >= 300 && error.toJSON().status <= 399){
+          history.push({
+            pathname: "/login",
+            state: {
+              session : true,
+            }
+          });
+        }else if(error.toJSON().status >= 400 && error.toJSON().status <= 499){
+          history.push("/404");
+        }else if(error.toJSON().status >= 500 && error.toJSON().status <= 599){
+          history.push("/500");
+        }
+      });
+    }
+    getTimeline();
+    getFormulir();
+  }, [history]);
   
   return (
     <>
@@ -305,10 +427,10 @@ const PengelolaanTimeline = () => {
                         </Button>
                     </CCol>
                 </CRow>
-                <Table columns={columnsTimeline} dataSource={dataTimeline.filter(item => item.prodi === "D3" || item.prodi === "All").sort((a, b) => a.start > b.start ? 1 : -1)} pagination={false} rowKey="id_account" bordered />
+                <Table columns={columnsTimeline} dataSource={getData(timeline).sort((a, b) => a.start_date > b.start_date ? 1 : -1)} pagination={false} rowKey="id" bordered />
               </TabPane>
               <TabPane tab="Waktu Pengumpulan Formulir" key="2">
-                <Table columns={columnsFormulir} dataSource={dataFormulir.filter(item => item.prodi === "D3" || item.prodi === "All")} pagination={false} rowKey="id_account" bordered />
+                <Table columns={columnsFormulir} dataSource={formulir} pagination={false} rowKey="id" bordered />
               </TabPane>
             </Tabs>
             </CCol>
@@ -319,7 +441,7 @@ const PengelolaanTimeline = () => {
 
       <Modal title="Tambah Kegiatan" 
         visible={isModalcreateVisible} 
-        onOk={handleOkCreate} 
+        onOk={form.submit} 
         onCancel={handleCancelCreate}
         width={600}
         zIndex={9999999}
@@ -327,35 +449,34 @@ const PengelolaanTimeline = () => {
             <Button key="back" onClick={handleCancelCreate}>
               Batal
             </Button>,
-            <Button key="submit" type="primary" onClick={handleOkCreate}>
+            <Button key="submit" type="primary" htmlType="submit" onClick={form.submit}>
               Simpan
             </Button>]}>
         <Form
             form={form}
             name="basic"
             wrapperCol={{ span: 24 }}
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
+            onFinish={handleOkCreate}
             autoComplete="off"
             >
-            <b>Nama Kegiatan</b>
+            <b>Nama Kegiatan<span style={{color:"red"}}> *</span></b>
             <Form.Item
                 name="name"
-                rules={[{ required: true, message: 'Please input your name!' }]}
+                rules={[{ required: true, message: 'Nama kegiatan tidak boleh kosong!' }]}
             >
                 <Input 
                     onChange={e => setName(e.target.value)}
                 />
             </Form.Item>
 
-            <b>Tanggal Awal dan Akhir</b>
-            <RangePicker  onChange={onChangeDate} style={{width: "100%"}}/>
+            <b>Tanggal Awal dan Akhir<span style={{color:"red"}}> *</span></b>
+            <RangePicker  onChange={onChangeDate} style={{width: "100%"}} value={date.start_date !== "" ? ([moment(date.start_date),moment(date.end_date)]) : null}/>
 
             <div style={{paddingTop:"24px"}}>
-              <b>Keterangan</b>
+              <b>Keterangan<span style={{color:"red"}}> *</span></b>
               <Form.Item
                   name="keterangan"
-                  rules={[{ required: true, message: 'Please input your description!' }]}
+                  rules={[{ required: true, message: 'Keterangan tidak boleh kosong!' }]}
               >
                   <Input 
                       onChange={e => setKeterangan(e.target.value)}
@@ -367,7 +488,7 @@ const PengelolaanTimeline = () => {
 
       <Modal title="Update Kegiatan" 
         visible={isModaleditTimelineVisible} 
-        onOk={handleOkEditTimeline} 
+        onOk={form.submit} 
         onCancel={handleCancelEditTimeline}
         width={600}
         zIndex={9999999}
@@ -375,58 +496,58 @@ const PengelolaanTimeline = () => {
             <Button key="back" onClick={handleCancelEditTimeline}>
               Batal
             </Button>,
-            <Button key="submit" type="primary" onClick={handleOkEditTimeline}>
+            <Button key="submit" type="primary"  onClick={form.submit}>
               Simpan
             </Button>]}>
         <Form
+        form={form}
         name="basic"
         wrapperCol={{ span: 24 }}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
+        onFinish={handleOkEditTimeline}
         autoComplete="off"
         fields={[
           {
               name:["name"],
-              value: choose.monarch
+              value: choose.name
           },
           {
             name:["keterangan"],
-            value: choose.house
+            value: choose.description
         }
         ]}
         >
-        <b>Nama Kegiatan</b>
+        <b>Nama Kegiatan<span style={{color:"red"}}> *</span></b>
         <Form.Item
             name="name"
-            rules={[{ required: true, message: 'Please input your name!' }]}
+            rules={[{ required: true, message: 'Nama kegiatan tidak boleh kosong!' }]}
         >
             <Input 
             onChange={e => {
               setChoose(pre => {
-                return {...pre, monarch:e.target.value}
+                return {...pre, name:e.target.value}
               })
-            }} value={choose.monarch}
+            }} value={choose.name}
             />
         </Form.Item>
 
-        <b>Tanggal Awal dan Akhir</b>
+        <b>Tanggal Awal dan Akhir<span style={{color:"red"}}> *</span></b>
         <RangePicker 
             onChange={onChangeDateUpdate} 
             style={{width: "100%"}}
-            value={choose ? ([moment(choose.start,"DD/MM/YYYY"),moment(choose.end,"DD/MM/YYYY")]) : ""}/>
+            value={choose.start_date !== "" ? ([moment(choose.start_date),moment(choose.end_date)]) : null}/>
         
         <div style={{paddingTop:"24px"}}>
-          <b>Keterangan</b>
+          <b>Keterangan<span style={{color:"red"}}> *</span></b>
           <Form.Item
               name="keterangan"
-              rules={[{ required: true, message: 'Please input your description!' }]}
+              rules={[{ required: true, message: 'Keterangan tidak boleh kosong!' }]}
           >
               <Input 
               onChange={e => {
                 setChoose(pre => {
-                  return {...pre, house:e.target.value}
+                  return {...pre, description:e.target.value}
                 })
-              }} value={choose.house}
+              }} value={choose.description}
               />
           </Form.Item>
         </div>
@@ -455,24 +576,24 @@ const PengelolaanTimeline = () => {
             fields={[
                 {
                     name:["name"],
-                    value: choose.nama
+                    value: choose.name
                 }
               ]}
             >
-            <b>Nama Formulir</b>
+            <b>Nama Formulir<span style={{color:"red"}}> *</span></b>
             <Form.Item
                 name="name"
-                rules={[{ required: true, message: 'Please input your name!' }]}
+                rules={[{ required: true, message: 'Nama formulir tidak boleh kosong!' }]}
             >
                 <Input
                 disabled 
-                value={choose.nama}
+                value={choose.name}
                 />
             </Form.Item>
 
-            <b>Timeline</b><br></br>
-            <Select value={choose.timeline} style={{ width: "100%" }} onChange={handleChange}>
-                {dataTimeline.map((item,i) =>  <Option key={i} value={item.monarch}>{item.monarch}</Option>)}
+            <b>Timeline<span style={{color:"red"}}> *</span></b><br></br>
+            <Select value={choose.description} style={{ width: "100%" }} onChange={handleChange}>
+                {timeline.filter(item => item.prodi_id === parseInt(localStorage.getItem("id_prodi"))).map((item,i) =>  <Option key={i} value={item.id}>{item.description}</Option>)}
             </Select>
           </Form>
       </Modal>
